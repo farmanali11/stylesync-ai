@@ -1,0 +1,443 @@
+import { useState, useEffect } from 'react';
+import api from '../utils/api';
+
+const WhatsAppCard = ({ data, onCopy }) => (
+  <div className="bg-gray-800 border border-gray-700 rounded-xl p-4">
+    <div className="flex items-center justify-between mb-3">
+      <div>
+        <p className="text-white font-medium text-sm">
+          {data.customerName}
+        </p>
+        <p className="text-gray-500 text-xs">{data.phone}</p>
+      </div>
+      <span className="bg-emerald-500/10 border border-emerald-500/20
+                     text-emerald-400 text-xs px-2 py-1 rounded-full">
+        {data.discountCode}
+      </span>
+    </div>
+    <p className="text-gray-300 text-sm leading-relaxed mb-3">
+      {data.message}
+    </p>
+    <button
+      onClick={() => onCopy(data.message, data.customerName)}
+      className="w-full bg-green-600 hover:bg-green-500 text-white
+               text-sm py-2 rounded-lg transition-colors duration-200
+               flex items-center justify-center gap-2"
+    >
+      <span>📱</span>
+      Copy for WhatsApp
+    </button>
+  </div>
+);
+
+const Customers = () => {
+  const [customers, setCustomers] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingCustomer, setEditingCustomer] = useState(null);
+  const [whatsappMessages, setWhatsappMessages] = useState([]);
+  const [generatingMessages, setGeneratingMessages] = useState(false);
+  const [showWhatsapp, setShowWhatsapp] = useState(false);
+  const [copiedName, setCopiedName] = useState('');
+  const [formData, setFormData] = useState({
+    customerName: '',
+    phone: '',
+    email: '',
+    totalSpent: '',
+    lastPurchaseDate: ''
+  });
+
+  useEffect(() => {
+    fetchCustomers();
+  }, []);
+
+  const fetchCustomers = async () => {
+    try {
+      const res = await api.get('/customers');
+      setCustomers(res.data.customers);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      if (editingCustomer) {
+        await api.put(`/customers/${editingCustomer._id}`, formData);
+      } else {
+        await api.post('/customers', formData);
+      }
+      setFormData({
+        customerName: '',
+        phone: '',
+        email: '',
+        totalSpent: '',
+        lastPurchaseDate: ''
+      });
+      setShowForm(false);
+      setEditingCustomer(null);
+      fetchCustomers();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleEdit = (customer) => {
+    setEditingCustomer(customer);
+    setFormData({
+      customerName: customer.customerName,
+      phone: customer.phone,
+      email: customer.email || '',
+      totalSpent: customer.totalSpent,
+      lastPurchaseDate: customer.lastPurchaseDate?.split('T')[0] || ''
+    });
+    setShowForm(true);
+  };
+
+  const handleDelete = async (id) => {
+    if (!window.confirm('Delete this customer?')) return;
+    try {
+      await api.delete(`/customers/${id}`);
+      fetchCustomers();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleCancel = () => {
+    setShowForm(false);
+    setEditingCustomer(null);
+    setFormData({
+      customerName: '',
+      phone: '',
+      email: '',
+      totalSpent: '',
+      lastPurchaseDate: ''
+    });
+  };
+
+  const generateWhatsAppMessages = async () => {
+    setGeneratingMessages(true);
+    setShowWhatsapp(true);
+    try {
+      const res = await api.get('/chat/whatsapp');
+      setWhatsappMessages(res.data.messages);
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setGeneratingMessages(false);
+    }
+  };
+
+  const handleCopy = (message, name) => {
+    navigator.clipboard.writeText(message);
+    setCopiedName(name);
+    setTimeout(() => setCopiedName(''), 2000);
+  };
+
+  const getDaysSinceLastPurchase = (date) => {
+    const diff = new Date() - new Date(date);
+    return Math.floor(diff / (1000 * 60 * 60 * 24));
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <p className="text-emerald-400">Loading customers...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-6">
+
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold text-white">Customers</h1>
+          <p className="text-gray-400 mt-1">
+            {customers.length} total customers
+          </p>
+        </div>
+        <div className="flex gap-3">
+          <button
+            onClick={generateWhatsAppMessages}
+            className="bg-green-600 hover:bg-green-500 text-white
+                     px-4 py-2 rounded-lg text-sm font-medium
+                     transition-colors duration-200 flex items-center gap-2"
+          >
+            <span>📱</span>
+            Win-Back Customers
+          </button>
+          <button
+            onClick={() => setShowForm(!showForm)}
+            className="bg-emerald-500 hover:bg-emerald-400 text-white
+                     px-4 py-2 rounded-lg text-sm font-medium
+                     transition-colors duration-200"
+          >
+            + Add Customer
+          </button>
+        </div>
+      </div>
+
+      {/* WhatsApp Win-Back Panel */}
+      {showWhatsapp && (
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <h2 className="text-white font-semibold">
+                📱 WhatsApp Win-Back Messages
+              </h2>
+              <p className="text-gray-500 text-sm mt-1">
+                Personalized messages for inactive customers
+              </p>
+            </div>
+            <button
+              onClick={() => setShowWhatsapp(false)}
+              className="text-gray-500 hover:text-white transition-colors"
+            >
+              ✕
+            </button>
+          </div>
+
+          {generatingMessages ? (
+            <div className="flex items-center justify-center py-8">
+              <p className="text-emerald-400 text-sm">
+                AI is generating personalized messages...
+              </p>
+            </div>
+          ) : whatsappMessages.length === 0 ? (
+            <div className="text-center py-8">
+              <p className="text-gray-400 text-sm">
+                No inactive customers found.
+              </p>
+            </div>
+          ) : (
+            <>
+              {copiedName && (
+                <div className="bg-green-500/10 border border-green-500/20
+                              text-green-400 px-4 py-2 rounded-lg mb-4
+                              text-sm text-center">
+                  ✓ Message copied for {copiedName}
+                </div>
+              )}
+              <div className="grid grid-cols-1 md:grid-cols-2 
+                            lg:grid-cols-3 gap-4">
+                {whatsappMessages.map((msg, index) => (
+                  <WhatsAppCard
+                    key={index}
+                    data={msg}
+                    onCopy={handleCopy}
+                  />
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      )}
+
+      {/* Add/Edit Form */}
+      {showForm && (
+        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+          <h2 className="text-white font-semibold mb-4">
+            {editingCustomer ? 'Edit Customer' : 'Add New Customer'}
+          </h2>
+          <form onSubmit={handleSubmit}>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="text-gray-400 text-sm mb-1 block">
+                  Customer Name
+                </label>
+                <input
+                  type="text"
+                  name="customerName"
+                  value={formData.customerName}
+                  onChange={handleChange}
+                  placeholder="Ahmed Khan"
+                  required
+                  className="w-full bg-gray-800 border border-gray-700
+                           text-white rounded-lg px-4 py-3 text-sm
+                           focus:outline-none focus:border-emerald-500
+                           placeholder-gray-600"
+                />
+              </div>
+              <div>
+                <label className="text-gray-400 text-sm mb-1 block">
+                  Phone Number
+                </label>
+                <input
+                  type="text"
+                  name="phone"
+                  value={formData.phone}
+                  onChange={handleChange}
+                  placeholder="03001234567"
+                  required
+                  className="w-full bg-gray-800 border border-gray-700
+                           text-white rounded-lg px-4 py-3 text-sm
+                           focus:outline-none focus:border-emerald-500
+                           placeholder-gray-600"
+                />
+              </div>
+              <div>
+                <label className="text-gray-400 text-sm mb-1 block">
+                  Email (optional)
+                </label>
+                <input
+                  type="email"
+                  name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="ahmed@gmail.com"
+                  className="w-full bg-gray-800 border border-gray-700
+                           text-white rounded-lg px-4 py-3 text-sm
+                           focus:outline-none focus:border-emerald-500
+                           placeholder-gray-600"
+                />
+              </div>
+              <div>
+                <label className="text-gray-400 text-sm mb-1 block">
+                  Last Purchase Date
+                </label>
+                <input
+                  type="date"
+                  name="lastPurchaseDate"
+                  value={formData.lastPurchaseDate}
+                  onChange={handleChange}
+                  className="w-full bg-gray-800 border border-gray-700
+                           text-white rounded-lg px-4 py-3 text-sm
+                           focus:outline-none focus:border-emerald-500"
+                />
+              </div>
+            </div>
+            <div className="flex gap-3 mt-4">
+              <button
+                type="submit"
+                className="bg-emerald-500 hover:bg-emerald-400 text-white
+                         px-6 py-2 rounded-lg text-sm font-medium
+                         transition-colors duration-200"
+              >
+                {editingCustomer ? 'Update Customer' : 'Add Customer'}
+              </button>
+              <button
+                type="button"
+                onClick={handleCancel}
+                className="bg-gray-800 hover:bg-gray-700 text-gray-400
+                         px-6 py-2 rounded-lg text-sm font-medium
+                         transition-colors duration-200"
+              >
+                Cancel
+              </button>
+            </div>
+          </form>
+        </div>
+      )}
+
+      {/* Customers Table */}
+      <div className="bg-gray-900 border border-gray-800 
+                      rounded-2xl overflow-hidden">
+        {customers.length === 0 ? (
+          <div className="p-12 text-center">
+            <p className="text-4xl mb-3">👥</p>
+            <p className="text-white font-medium">No customers yet</p>
+            <p className="text-gray-500 text-sm mt-1">
+              Add your first customer to get started
+            </p>
+          </div>
+        ) : (
+          <table className="w-full">
+            <thead>
+              <tr className="border-b border-gray-800">
+                <th className="text-left text-gray-400 text-sm
+                             font-medium px-6 py-4">Customer</th>
+                <th className="text-left text-gray-400 text-sm
+                             font-medium px-6 py-4">Phone</th>
+                <th className="text-left text-gray-400 text-sm
+                             font-medium px-6 py-4">Total Spent</th>
+                <th className="text-left text-gray-400 text-sm
+                             font-medium px-6 py-4">Last Purchase</th>
+                <th className="text-left text-gray-400 text-sm
+                             font-medium px-6 py-4">Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {customers.map((customer) => {
+                const daysSince = getDaysSinceLastPurchase(
+                  customer.lastPurchaseDate
+                );
+                const isInactive = daysSince > 60;
+                return (
+                  <tr
+                    key={customer._id}
+                    className={`border-b border-gray-800 last:border-0
+                               hover:bg-gray-800/50 transition-colors
+                               ${isInactive ? 'bg-red-500/5' : ''}`}
+                  >
+                    <td className="px-6 py-4">
+                      <p className="text-white text-sm font-medium">
+                        {customer.customerName}
+                      </p>
+                      {customer.email && (
+                        <p className="text-gray-500 text-xs mt-0.5">
+                          {customer.email}
+                        </p>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-gray-300 text-sm">
+                        {customer.phone}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-emerald-400 text-sm font-medium">
+                      PKR {(customer.totalSpent || 0).toLocaleString()}
+                      </p>
+                    </td>
+                    <td className="px-6 py-4">
+                      <p className="text-gray-300 text-sm">
+                        {daysSince} days ago
+                      </p>
+                      {isInactive && (
+                        <span className="text-red-400 text-xs">
+                          ⚠️ Inactive
+                        </span>
+                      )}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex gap-2">
+                        <button
+                          onClick={() => handleEdit(customer)}
+                          className="text-gray-400 hover:text-white text-xs
+                                   bg-gray-800 hover:bg-gray-700 px-3 py-1.5
+                                   rounded-lg transition-colors"
+                        >
+                          Edit
+                        </button>
+                        <button
+                          onClick={() => handleDelete(customer._id)}
+                          className="text-gray-400 hover:text-red-400 text-xs
+                                   bg-gray-800 hover:bg-gray-700 px-3 py-1.5
+                                   rounded-lg transition-colors"
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default Customers;

@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Imtiaz Supermart — StyleSync AI Test</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #0f172a;
+      color: white;
+      padding: 40px;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+    h1 { color: #34d399; }
+    button {
+      background: #10b981;
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 16px;
+      margin: 10px 5px;
+    }
+    button:hover { background: #059669; }
+    button:disabled { opacity: 0.5; }
+    #result {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 20px;
+      margin-top: 20px;
+      white-space: pre-wrap;
+      font-family: monospace;
+      font-size: 13px;
+      line-height: 1.6;
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    .score-card {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 16px;
+      margin: 20px 0;
+    }
+    .score-item {
+      background: #1e293b;
+      border: 1px solid #334155;
+      border-radius: 12px;
+      padding: 16px;
+      text-align: center;
+    }
+    .score-number {
+      font-size: 32px;
+      font-weight: bold;
+      color: #34d399;
+    }
+    .score-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-top: 4px;
+    }
+    .loading { color: #34d399; font-style: italic; }
+    .error { color: #f87171; }
+    .success { color: #34d399; }
+    input {
+      background: #1e293b;
+      border: 1px solid #334155;
+      color: white;
+      padding: 10px 16px;
+      border-radius: 8px;
+      width: 400px;
+      font-size: 14px;
+      margin-bottom: 10px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>🏪 Imtiaz Supermart</h1>
+  <p style="color: #94a3b8;">
+    Powered by StyleSync AI — Business Intelligence Platform
+  </p>
+
+  <div>
+    <input
+      type="text"
+      id="apiKeyInput"
+      placeholder="Paste your StyleSync API key here (sk-ss-...)"
+    />
+  </div>
+
+  <div>
+    <button onclick="runHealthCheck()">
+      ⚡ Quick Health Check
+    </button>
+    <button onclick="runFullAnalysis()">
+      🧠 Full AI Analysis
+    </button>
+  </div>
+
+  <!-- Score Cards -->
+  <div class="score-card" id="scoreCards" style="display:none">
+    <div class="score-item">
+      <div class="score-number" id="overallScore">-</div>
+      <div class="score-label">Overall Score</div>
+    </div>
+    <div class="score-item">
+      <div class="score-number" id="inventoryScore">-</div>
+      <div class="score-label">Inventory</div>
+    </div>
+    <div class="score-item">
+      <div class="score-number" id="customerScore">-</div>
+      <div class="score-label">Customers</div>
+    </div>
+    <div class="score-item">
+      <div class="score-number" id="callsLeft">-</div>
+      <div class="score-label">API Calls Left</div>
+    </div>
+  </div>
+
+  <div id="result">
+    Results will appear here...
+  </div>
+
+  <script>
+    // Simulated Imtiaz Supermart data
+    const imtiazData = {
+      inventory: [
+        {
+          productName: "Basmati Rice 5kg",
+          quantity: 150,
+          price: 1200,
+          category: "Grocery"
+        },
+        {
+          productName: "Sunflower Oil 3L",
+          quantity: 8,
+          price: 850,
+          category: "Grocery"
+        },
+        {
+          productName: "Surf Excel 3kg",
+          quantity: 45,
+          price: 650,
+          category: "Household"
+        },
+        {
+          productName: "Nestle Milk 1L",
+          quantity: 3,
+          price: 280,
+          category: "Dairy"
+        },
+        {
+          productName: "Lays Chips Box",
+          quantity: 200,
+          price: 120,
+          category: "Snacks"
+        }
+      ],
+      customers: [
+        {
+          customerName: "Ahmed Family",
+          lastPurchaseDate: "2026-04-10",
+          totalSpent: 45000,
+          phone: "03001234567"
+        },
+        {
+          customerName: "Sara Malik",
+          lastPurchaseDate: "2025-11-15",
+          totalSpent: 28000,
+          phone: "03121234567"
+        },
+        {
+          customerName: "Bilal Store",
+          lastPurchaseDate: "2025-10-01",
+          totalSpent: 95000,
+          phone: "03331234567"
+        },
+        {
+          customerName: "Khan Household",
+          lastPurchaseDate: "2026-03-20",
+          totalSpent: 12000,
+          phone: "03451234567"
+        }
+      ],
+      transactions: [
+        { amount: 5000, date: "2026-04-10", productName: "Basmati Rice" },
+        { amount: 3400, date: "2026-04-09", productName: "Sunflower Oil" },
+        { amount: 8500, date: "2026-04-08", productName: "Mixed Grocery" },
+        { amount: 2800, date: "2026-03-25", productName: "Nestle Milk" },
+        { amount: 12000, date: "2026-03-20", productName: "Bulk Order" }
+      ]
+    };
+
+    function getApiKey() {
+      const key = document.getElementById('apiKeyInput').value.trim();
+      if (!key) {
+        alert('Please paste your API key first');
+        return null;
+      }
+      return key;
+    }
+
+    function showResult(data, isError = false) {
+      const result = document.getElementById('result');
+      result.className = isError ? 'error' : '';
+      result.textContent = JSON.stringify(data, null, 2);
+    }
+
+    async function runHealthCheck() {
+      const apiKey = getApiKey();
+      if (!apiKey) return;
+
+      const result = document.getElementById('result');
+      result.textContent = '⏳ Running health check...';
+      result.className = 'loading';
+
+      try {
+        const response = await fetch(
+          'http://localhost:5000/v1/health-check',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': apiKey
+            },
+            body: JSON.stringify(imtiazData)
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.success) {
+          // Show score cards
+          document.getElementById('scoreCards')
+            .style.display = 'grid';
+          document.getElementById('overallScore')
+            .textContent = data.quickHealth.overall + '/100';
+          document.getElementById('inventoryScore')
+            .textContent = data.quickHealth.inventoryScore;
+          document.getElementById('customerScore')
+            .textContent = data.quickHealth.customerScore;
+          document.getElementById('callsLeft')
+            .textContent = data.callsRemaining;
+        }
+
+        showResult(data);
+      } catch (error) {
+        showResult({ error: error.message }, true);
+      }
+    }
+
+    async function runFullAnalysis() {
+      const apiKey = getApiKey();
+      if (!apiKey) return;
+
+      const result = document.getElementById('result');
+      result.textContent = '🧠 AI is analyzing Imtiaz data... (10-20 seconds)';
+      result.className = 'loading';
+
+      try {
+        const response = await fetch(
+          'http://localhost:5000/v1/analyze',
+          {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-api-key': apiKey
+            },
+            body: JSON.stringify({
+              ...imtiazData,
+              analysisType: 'full',
+              businessContext: {
+                businessType: 'supermarket',
+                location: 'Karachi',
+                currency: 'PKR'
+              }
+            })
+          }
+        );
+
+        const data = await response.json();
+
+        if (data.success && data.analysis) {
+          document.getElementById('scoreCards')
+            .style.display = 'grid';
+          document.getElementById('overallScore')
+            .textContent = data.analysis.healthScore?.overall + '/100';
+          document.getElementById('inventoryScore')
+            .textContent = data.analysis.healthScore?.inventory;
+          document.getElementById('customerScore')
+            .textContent = data.analysis.healthScore?.customers;
+          document.getElementById('callsLeft')
+            .textContent = data.callsRemaining;
+        }
+
+        showResult(data);
+      } catch (error) {
+        showResult({ error: error.message }, true);
+      }
+    }
+  </script>
+
+</body>
+</html>
