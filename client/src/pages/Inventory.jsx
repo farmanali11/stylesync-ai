@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { Check, RotateCcw, TriangleAlert, TriangleAlertIcon } from 'lucide-react';
 import api from '../utils/api';
 
 const urgencyConfig = {
@@ -14,7 +15,7 @@ const urgencyConfig = {
     border: 'border-yellow-500/30',
     text: 'text-yellow-400',
     badge: 'bg-yellow-500/20 text-yellow-400',
-    icon: '⚠️'
+    icon: <TriangleAlertIcon size={14} strokeWidth={2.5}/>
   },
   ok: {
     bg: 'bg-emerald-500/10',
@@ -285,7 +286,7 @@ const Inventory = () => {
           className="bg-emerald-500/10 border border-emerald-500/20 rounded-xl px-4 py-2 flex items-center gap-2 cursor-pointer hover:border-emerald-500/40 transition-colors"
           onClick={() => setStockFilter(stockFilter === 'healthy' ? 'all' : 'healthy')}
         >
-          <span className="text-emerald-400 text-xs">✅ Healthy</span>
+          <span className="flex items-center text-emerald-400 text-xs gap-1 font-bold"> <Check size={14} strokeWidth={3}/> Healthy</span>
           <span className="text-emerald-400 font-bold text-sm">
             {products.filter(p => p.quantity >= 20).length}
           </span>
@@ -348,9 +349,9 @@ const Inventory = () => {
               }}
               className="bg-gray-800 hover:bg-gray-700 text-gray-400
                        hover:text-white border border-gray-700
-                       rounded-lg px-4 py-2 text-sm transition-colors"
+                       rounded-lg px-3 py-2 text-sm transition-colors"
             >
-              Reset ✕
+              <RotateCcw />Reset 
             </button>
           )}
         </div>

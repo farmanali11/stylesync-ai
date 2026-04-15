@@ -4,6 +4,37 @@ const groq = new Groq({
   apiKey: process.env.GROQ_API_KEY
 });
 
+const TARGET_RESPONSE_TOKENS = 11800;
+const MAX_TOTAL_TOKENS = 12000;
+const MIN_RESPONSE_TOKENS = 300;
+const TOKEN_SAFETY_BUFFER = 1000;
+const MAX_PROMPT_TOKENS = 2500;
+// Conservative estimate to avoid provider tokenizer undercount.
+const CHARS_PER_TOKEN = 2;
+
+const buildGroqTokenSafeRequest = (prompt) => {
+  const maxPromptTokens = Math.min(
+    MAX_PROMPT_TOKENS,
+    MAX_TOTAL_TOKENS - TOKEN_SAFETY_BUFFER - MIN_RESPONSE_TOKENS
+  );
+  const maxPromptChars = Math.max(1000, maxPromptTokens * CHARS_PER_TOKEN);
+
+  const safePrompt = (!prompt || prompt.length <= maxPromptChars)
+    ? prompt
+    : `${prompt.slice(0, maxPromptChars)}\n\n[Truncated to stay under token budget]`;
+
+  const estimatedPromptTokens = Math.ceil((safePrompt || '').length / CHARS_PER_TOKEN);
+  const availableResponseTokens = MAX_TOTAL_TOKENS -
+    TOKEN_SAFETY_BUFFER -
+    estimatedPromptTokens;
+  const maxTokens = Math.max(
+    MIN_RESPONSE_TOKENS,
+    Math.min(TARGET_RESPONSE_TOKENS, availableResponseTokens)
+  );
+
+  return { safePrompt, maxTokens };
+};
+
 // MAIN PUBLIC ANALYSIS ENDPOINT
 exports.analyzeBusinessData = async (req, res) => {
   try {
@@ -127,10 +158,11 @@ Generate a comprehensive analysis in this EXACT JSON format only:
 }
     `;
 
+    const { safePrompt, maxTokens } = buildGroqTokenSafeRequest(prompt);
     const completion = await groq.chat.completions.create({
       model: 'llama-3.3-70b-versatile',
-      max_tokens: 3000,
-      messages: [{ role: 'user', content: prompt }]
+      max_tokens: maxTokens,
+      messages: [{ role: 'user', content: safePrompt }]
     });
 
     const rawResponse = completion.choices[0].message.content;

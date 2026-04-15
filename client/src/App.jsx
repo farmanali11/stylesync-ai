@@ -18,6 +18,7 @@ import HealthScore from './pages/HealthScore';
 import GhostInventory from './pages/GhostInventory';
 import AnomalyDetection from './pages/AnomalyDetection';
 import ApiDashboard from './pages/ApiDashboard';
+import ImportData from './pages/ImportData';
 
 const ProtectedRoute = ({ children }) => {
   const { user, loading } = useAuth();
@@ -33,10 +34,11 @@ const ProtectedRoute = ({ children }) => {
 function App() {
   return (
     <Routes>
+      <Route path="/" element={<Navigate to="/landing" replace />} />
       <Route path="/landing" element={<Landing />} />
       <Route path="/login" element={<Login />} />
       <Route path="/signup" element={<Signup />} />
-      <Route path="/" element={
+      <Route path="/dashboard" element={
         <ProtectedRoute>
           <Layout><Dashboard /></Layout>
         </ProtectedRoute>
@@ -93,11 +95,17 @@ function App() {
     <Layout><AnomalyDetection /></Layout>
   </ProtectedRoute>
 } />
+<Route path="/import" element={
+  <ProtectedRoute>
+    <Layout><ImportData /></Layout>
+  </ProtectedRoute>
+} />
 <Route path="/api-dashboard" element={
   <ProtectedRoute>
     <Layout><ApiDashboard /></Layout>
   </ProtectedRoute>
 } />
+      <Route path="*" element={<Navigate to="/landing" replace />} />
     </Routes>
   );
 }

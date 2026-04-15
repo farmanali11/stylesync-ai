@@ -26,7 +26,7 @@ const Signup = () => {
     try {
       const res = await api.post('/auth/signup', formData);
       login(res.data.user, res.data.token);
-      navigate('/');
+      navigate('/dashboard');
     } catch (err) {
       setError(err.response?.data?.error || 'Signup failed');
     } finally {

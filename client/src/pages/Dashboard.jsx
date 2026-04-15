@@ -189,7 +189,8 @@ const Dashboard = () => {
           </p>
         </div>
         <div className="text-right">
-          <p className="text-gray-500 text-xs">{getTodayDate()}</p>
+        <p className="bg-emerald-400 p-1 rounded-lg text-white-400 text-m">{getTodayDate()}</p>
+
         </div>
       </div>
 

@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { RefreshCcw } from 'lucide-react';
 import api from '../utils/api';
 
 const trendConfig = {
@@ -87,10 +88,11 @@ const DailyBriefing = () => {
           <button
             onClick={fetchBriefing}
             className="text-gray-500 hover:text-white text-xs
-                     bg-gray-800 hover:bg-gray-700 px-3 py-1.5
-                     rounded-lg transition-colors"
+                     bg-gray-800 hover:bg-gray-700 px-3.5 py-1.5
+                     rounded-lg transition-colors flex items-center gap-1.5"
           >
-            🔄 Refresh
+             <RefreshCcw className="size-3.5 " />Refresh 
+           
           </button>
         </div>
       </div>

@@ -15,7 +15,8 @@ import {
   ShieldAlert, 
   Zap,
   LogOut,
-  Menu
+  Menu,
+  Import
 } from 'lucide-react';
 
 const Layout = ({ children }) => {
@@ -32,9 +33,10 @@ const Layout = ({ children }) => {
   // Expert Tip: Add specific colors to each icon to give the UI life
   const navItems = [
     { path: '/briefing', label: 'Daily Briefing', icon: <Sparkles size={20} strokeWidth={1.5} className="text-amber-400" /> },
-    { path: '/', label: 'Dashboard', icon: <LayoutDashboard size={20} strokeWidth={1.5} className="text-sky-400" /> },
+    { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} strokeWidth={1.5} className="text-sky-400" /> },
     { path: '/inventory', label: 'Inventory', icon: <PackageSearch size={20} strokeWidth={1.5} className="text-indigo-400" /> },
     { path: '/customers', label: 'Customers', icon: <UsersRound size={20} strokeWidth={1.5} className="text-purple-400" /> },
+    { path: '/import', label: 'Import Data', icon: <Import size={20} strokeWidth={1.5} className="text-sky-400" /> },
     { path: '/ai-assistant', label: 'AI Assistant', icon: <BotMessageSquare size={20} strokeWidth={1.5} className="text-emerald-400" /> },
     { path: '/eid-forecast', label: 'Eid Forecast', icon: <MoonStar size={20} strokeWidth={1.5} className="text-yellow-200" /> },
     { path: '/profit', label: 'Profit Intel', icon: <TrendingUp size={20} strokeWidth={1.5} className="text-green-400" /> },
