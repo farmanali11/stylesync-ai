@@ -1,26 +1,46 @@
 import { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { 
-  Sparkles, 
-  LayoutDashboard, 
-  PackageSearch, 
-  UsersRound, 
-  BotMessageSquare, 
-  MoonStar, 
-  TrendingUp, 
-  MessageSquareShare, 
-  Activity, 
-  Ghost, 
-  ShieldAlert, 
-  Zap,
+import { useTheme } from '../context/ThemeContext';
+import {
+  LayoutDashboard,
+  Sunrise,
+  Package,
+  Users,
+  Upload,
+  Bot,
+  Moon,
+  DollarSign,
+  MessageCircle,
+  Heart,
+  Ghost,
+  ScanSearch,
+  PlugZap,
   LogOut,
   Menu,
-  Import
+  Sun,
+  MoonStar,
 } from 'lucide-react';
+
+const navItems = [
+  { path: '/briefing',       label: 'Daily Briefing',    icon: Sunrise        },
+  { path: '/',               label: 'Dashboard',         icon: LayoutDashboard},
+  { path: '/inventory',      label: 'Inventory',         icon: Package        },
+  { path: '/customers',      label: 'Customers',         icon: Users          },
+  { path: '/import',         label: 'Import Data',       icon: Upload         },
+  { path: '/ai-assistant',   label: 'AI Assistant',      icon: Bot            },
+  { path: '/eid-forecast',   label: 'Eid Forecast',      icon: Moon           },
+  { path: '/profit',         label: 'Profit Intel',      icon: DollarSign     },
+  { path: '/whatsapp-hub',   label: 'WhatsApp Hub',      icon: MessageCircle  },
+  { path: '/health-score',   label: 'Health Score',      icon: Heart          },
+  { path: '/ghost-inventory',label: 'Ghost Inventory',   icon: Ghost          },
+  { path: '/anomalies',      label: 'Anomaly Detection', icon: ScanSearch     },
+  { path: '/api-dashboard',  label: 'API Integration',   icon: PlugZap        },
+];
 
 const Layout = ({ children }) => {
   const { user, logout } = useAuth();
+  const { isDark, toggleTheme } = useTheme();
   const location = useLocation();
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -30,124 +50,133 @@ const Layout = ({ children }) => {
     navigate('/login');
   };
 
-  // Expert Tip: Add specific colors to each icon to give the UI life
-  const navItems = [
-    { path: '/briefing', label: 'Daily Briefing', icon: <Sparkles size={20} strokeWidth={1.5} className="text-amber-400" /> },
-    { path: '/dashboard', label: 'Dashboard', icon: <LayoutDashboard size={20} strokeWidth={1.5} className="text-sky-400" /> },
-    { path: '/inventory', label: 'Inventory', icon: <PackageSearch size={20} strokeWidth={1.5} className="text-indigo-400" /> },
-    { path: '/customers', label: 'Customers', icon: <UsersRound size={20} strokeWidth={1.5} className="text-purple-400" /> },
-    { path: '/import', label: 'Import Data', icon: <Import size={20} strokeWidth={1.5} className="text-sky-400" /> },
-    { path: '/ai-assistant', label: 'AI Assistant', icon: <BotMessageSquare size={20} strokeWidth={1.5} className="text-emerald-400" /> },
-    { path: '/eid-forecast', label: 'Eid Forecast', icon: <MoonStar size={20} strokeWidth={1.5} className="text-yellow-200" /> },
-    { path: '/profit', label: 'Profit Intel', icon: <TrendingUp size={20} strokeWidth={1.5} className="text-green-400" /> },
-    { path: '/whatsapp-hub', label: 'WhatsApp Hub', icon: <MessageSquareShare size={20} strokeWidth={1.5} className="text-teal-400" /> },
-    { path: '/health-score', label: 'Health Score', icon: <Activity size={20} strokeWidth={1.5} className="text-rose-400" /> },
-    { path: '/ghost-inventory', label: 'Ghost Inventory', icon: <Ghost size={20} strokeWidth={1.5} className="text-gray-400" /> },
-    { path: '/anomalies', label: 'Anomaly Detection', icon: <ShieldAlert size={20} strokeWidth={1.5} className="text-orange-400" /> },
-    { path: '/api-dashboard', label: 'API Integration', icon: <Zap size={20} strokeWidth={1.5} className="text-cyan-400" /> },
-  ];
-
   return (
-    <div className="min-h-screen bg-gray-950 flex font-sans selection:bg-emerald-500/30">
-
+    <div
+      className="min-h-screen flex"
+      style={{ backgroundColor: 'var(--bg-primary)' }}
+    >
       {/* Sidebar */}
-      <aside className={`${sidebarOpen ? 'w-64' : 'w-20'} 
-                      bg-gray-900 border-r border-gray-800/50 
-                      transition-all duration-300 ease-in-out flex flex-col z-50`}>
-
-        {/* Logo Section */}
-        <div className="h-16 flex items-center px-6 border-b border-gray-800/50 bg-gray-900/50 backdrop-blur-xl">
+      <div
+        className={`${sidebarOpen ? 'w-64' : 'w-16'} transition-all duration-300 flex flex-col border-r flex-shrink-0`}
+        style={{
+          backgroundColor: 'var(--bg-secondary)',
+          borderColor: 'var(--border-color)'
+        }}
+      >
+        {/* Logo */}
+        <div
+          className="p-4 border-b flex-shrink-0"
+          style={{ borderColor: 'var(--border-color)' }}
+        >
           {sidebarOpen ? (
-            <h1 className="text-lg font-bold text-white tracking-tight flex items-center gap-2">
-              <div className="w-8 h-8 bg-emerald-500 rounded-lg flex items-center justify-center text-gray-900">S</div>
-              Style<span className="text-emerald-400">Sync</span> AI
+            <h1 className="text-xl font-bold" style={{ color: 'var(--text-primary)' }}>
+              Style<span style={{ color: 'var(--accent)' }}>Sync</span> AI
             </h1>
           ) : (
-            <div className="w-10 h-10 bg-emerald-500 rounded-lg flex items-center justify-center text-gray-900 font-bold mx-auto">S</div>
+            <h1 className="text-xl font-bold" style={{ color: 'var(--accent)' }}>S</h1>
           )}
         </div>
 
         {/* Nav Items */}
-        <nav className="flex-1 p-4 space-y-2 overflow-y-auto sidebar-scroll">
-          {navItems.map((item) => {
-            const isActive = location.pathname === item.path;
+        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+          {navItems.map(({ path, label }) => {
+            const isActive = location.pathname === path;
             return (
               <Link
-                key={item.path}
-                to={item.path}
-                className={`flex items-center gap-4 px-3 py-2.5 rounded-xl transition-all duration-200 group relative
-                           ${isActive 
-                             ? 'bg-emerald-500/10 text-emerald-400 shadow-[inset_0_0_10px_rgba(16,185,129,0.05)]' 
-                             : 'text-gray-400 hover:bg-gray-800/50 hover:text-gray-100'}`}
+                key={path}
+                to={path}
+                className="flex items-center gap-3 px-3 py-2.5 rounded-lg transition-colors duration-200"
+                style={{
+                  backgroundColor: isActive ? 'rgba(16, 185, 129, 0.1)' : 'transparent',
+                  color: isActive ? 'var(--accent)' : 'var(--text-secondary)',
+                  border: isActive ? '1px solid rgba(16, 185, 129, 0.2)' : '1px solid transparent'
+                }}
               >
-                {/* Active Indicator Line */}
-                {isActive && <div className="absolute left-0 w-1 h-5 bg-emerald-500 rounded-r-full" />}
-                
-                <div className={`transition-transform duration-200 group-hover:scale-110 ${isActive ? 'scale-110' : ''}`}>
-                  {item.icon}
-                </div>
-
+                <Icon size={18} className="flex-shrink-0" />
                 {sidebarOpen && (
-                  <span className="text-[13px] font-semibold tracking-wide">{item.label}</span>
+                  <span className="text-sm font-medium truncate">{label}</span>
                 )}
               </Link>
             );
           })}
         </nav>
 
-        {/* User + Logout Section */}
-        <div className="p-4 bg-gray-900/80 border-t border-gray-800/50">
-          {sidebarOpen && user && (
-            <div className="px-3 py-3 mb-3 bg-gray-800/30 rounded-xl border border-gray-800/50">
-              <p className="text-white text-sm font-bold truncate">{user?.name}</p>
-              <p className="text-emerald-500/80 text-[10px] uppercase tracking-widest font-bold mt-0.5">
-                {user?.brandName || 'ADMIN'}
+        {/* User + Logout */}
+        <div
+          className="p-3 border-t flex-shrink-0"
+          style={{ borderColor: 'var(--border-color)' }}
+        >
+          {sidebarOpen && (
+            <div className="px-3 py-2 mb-2">
+              <p className="text-sm font-medium truncate" style={{ color: 'var(--text-primary)' }}>
+                {user?.name}
+              </p>
+              <p className="text-xs truncate" style={{ color: 'var(--text-muted)' }}>
+                {user?.brandName}
               </p>
             </div>
           )}
           <button
             onClick={handleLogout}
-            className="flex items-center gap-4 px-3 py-2.5 w-full
-                     text-gray-400 hover:bg-red-500/10 hover:text-red-400
-                     rounded-xl transition-all duration-200 group"
+            className="flex items-center gap-3 px-3 py-2.5 w-full rounded-lg transition-colors duration-200 hover:bg-red-500/10"
+            style={{ color: 'var(--text-secondary)' }}
           >
-            <LogOut size={20} strokeWidth={1.5} className="group-hover:-translate-x-1 transition-transform" />
-            {sidebarOpen && <span className="text-sm font-bold">Logout</span>}
+            <LogOut size={18} className="flex-shrink-0" />
+            {sidebarOpen && <span className="text-sm font-medium">Logout</span>}
           </button>
         </div>
-      </aside>
+      </div>
 
-      {/* Main Content Area */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden">
+      {/* Main Content */}
+      <div className="flex-1 flex flex-col overflow-hidden">
 
-        {/* Glassmorphism Header */}
-        <header className="h-16 bg-gray-900/50 backdrop-blur-md border-b border-gray-800/50 
-                           px-8 flex items-center justify-between z-40">
-          <div className="flex items-center gap-6">
-            <button
-              onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-gray-800 rounded-lg text-gray-400 hover:text-white transition-all shadow-sm"
-            >
-              <Menu size={20} />
-            </button>
-            <h2 className="text-sm font-bold uppercase tracking-[0.2em] text-gray-400">
-              {navItems.find(i => i.path === location.pathname)?.label || 'Overview'}
-            </h2>
-          </div>
-          
-          {/* Top Bar Action (Optional Placeholder for Profile/Notifications) */}
-          <div className="flex items-center gap-4">
-            <div className="h-8 w-8 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-[10px] font-bold text-gray-950">
-              FA
-            </div>
-          </div>
+        {/* Top Bar */}
+        <header
+          className="border-b px-6 py-4 flex items-center gap-4 flex-shrink-0"
+          style={{
+            backgroundColor: 'var(--bg-secondary)',
+            borderColor: 'var(--border-color)'
+          }}
+        >
+          <button
+            onClick={() => setSidebarOpen(prev => !prev)}
+            className="transition-colors rounded-lg p-1.5 hover:bg-gray-500/10"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            <Menu size={20} />
+          </button>
+
+          <h2 className="font-medium flex-1" style={{ color: 'var(--text-primary)' }}>
+            {navItems.find(i => i.path === location.pathname)?.label || 'Dashboard'}
+          </h2>
+
+          {/* Theme Toggle */}
+          <button
+            onClick={toggleTheme}
+            className="flex items-center gap-2 px-4 py-2 rounded-xl border transition-all duration-200 text-sm font-medium"
+            style={{
+              backgroundColor: isDark ? 'rgba(16, 185, 129, 0.1)' : 'rgba(5, 150, 105, 0.1)',
+              borderColor: isDark ? 'rgba(16, 185, 129, 0.3)' : 'rgba(5, 150, 105, 0.3)',
+              color: 'var(--accent)'
+            }}
+            title={isDark ? 'Switch to Light Mode' : 'Switch to Dark Mode'}
+          >
+            {isDark
+              ? <Sun size={16} />
+              : <MoonStar size={16} />
+            }
+            <span className="hidden md:block">
+              {isDark ? 'Light Mode' : 'Dark Mode'}
+            </span>
+          </button>
         </header>
 
-        {/* Page Content with custom scrollbar */}
-        <main className="flex-1 overflow-y-auto bg-gray-950 p-8 custom-scrollbar">
-          <div className="max-w-7xl mx-auto">
-            {children}
-          </div>
+        {/* Page Content */}
+        <main
+          className="flex-1 overflow-y-auto p-6"
+          style={{ backgroundColor: 'var(--bg-primary)' }}
+        >
+          {children}
         </main>
       </div>
     </div>

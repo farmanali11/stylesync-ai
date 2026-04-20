@@ -2,6 +2,40 @@
 @tailwind components;
 @tailwind utilities;
 
+
+/* Dark theme (default) */
+:root {
+  --bg-primary: #030712;
+  --bg-secondary: #111827;
+  --bg-card: #111827;
+  --bg-input: #1f2937;
+  --border-color: #1f2937;
+  --text-primary: #ffffff;
+  --text-secondary: #9ca3af;
+  --text-muted: #6b7280;
+  --accent: #10b981;
+  --accent-hover: #34d399;
+}
+
+/* Light theme */
+.light {
+  --bg-primary: #f9fafb;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --bg-input: #f3f4f6;
+  --border-color: #e5e7eb;
+  --text-primary: #111827;
+  --text-secondary: #6b7280;
+  --text-muted: #9ca3af;
+  --accent: #059669;
+  --accent-hover: #10b981;
+}
+
+body {
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
 /**
  * STYLESYNC AI - CORE DESIGN SYSTEM (v2.0)
  * GLOBAL UI ENHANCEMENTS & COMPONENT OVERRIDES

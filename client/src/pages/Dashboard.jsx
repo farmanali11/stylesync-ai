@@ -9,9 +9,17 @@ import {
 const COLORS = ['#10b981', '#3b82f6', '#f59e0b', '#ef4444', '#8b5cf6'];
 
 const StatCard = ({ title, value, icon, color, trend }) => (
-  <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6 hover:border-gray-700 transition-colors duration-200">
+  <div
+    className="rounded-2xl p-6 hover:opacity-90 transition-all duration-200 border"
+    style={{
+      backgroundColor: 'var(--bg-card)',
+      borderColor: 'var(--border-color)'
+    }}
+  >
     <div className="flex items-center justify-between mb-4">
-      <p className="text-gray-400 text-sm">{title}</p>
+      <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+        {title}
+      </p>
       <span className="text-2xl">{icon}</span>
     </div>
     <p className={`text-3xl font-bold ${color}`}>{value}</p>
@@ -26,8 +34,16 @@ const StatCard = ({ title, value, icon, color, trend }) => (
 const CustomTooltip = ({ active, payload, label }) => {
   if (active && payload && payload.length) {
     return (
-      <div className="bg-gray-800 border border-gray-700 rounded-xl px-4 py-3 shadow-xl">
-        <p className="text-gray-400 text-xs mb-1">{label}</p>
+      <div
+        className="rounded-xl px-4 py-3 shadow-xl border"
+        style={{
+          backgroundColor: 'var(--bg-card)',
+          borderColor: 'var(--border-color)'
+        }}
+      >
+        <p className="text-xs mb-1" style={{ color: 'var(--text-secondary)' }}>
+          {label}
+        </p>
         <p className="text-emerald-400 font-bold text-sm">
           PKR {payload[0].value.toLocaleString()}
         </p>
@@ -161,13 +177,13 @@ const Dashboard = () => {
   if (loading) {
     return (
       <div className="space-y-6 animate-pulse">
-        <div className="h-8 bg-gray-800 rounded-lg w-64" />
+        <div className="h-8 rounded-lg w-64" style={{ backgroundColor: 'var(--bg-card)' }} />
         <div className="grid grid-cols-4 gap-4">
           {[1, 2, 3, 4].map(i => (
-            <div key={i} className="h-32 bg-gray-800 rounded-2xl" />
+            <div key={i} className="h-32 rounded-2xl" style={{ backgroundColor: 'var(--bg-card)' }} />
           ))}
         </div>
-        <div className="h-64 bg-gray-800 rounded-2xl" />
+        <div className="h-64 rounded-2xl" style={{ backgroundColor: 'var(--bg-card)' }} />
       </div>
     );
   }
@@ -180,17 +196,18 @@ const Dashboard = () => {
       {/* Welcome Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold" style={{ color: 'var(--text-primary)' }}>
             Welcome back, {getFirstName()} 👋
           </h1>
-          <p className="text-gray-400 mt-1">
+          <p className="mt-1" style={{ color: 'var(--text-secondary)' }}>
             Here is what is happening with{' '}
             <span className="text-emerald-400">{user && user.brandName}</span> today
           </p>
         </div>
         <div className="text-right">
-        <p className="bg-emerald-400 p-1 rounded-lg text-white-400 text-m">{getTodayDate()}</p>
-
+          <p className="bg-emerald-400 p-1 rounded-lg text-white text-m">
+            {getTodayDate()}
+          </p>
         </div>
       </div>
 
@@ -200,7 +217,7 @@ const Dashboard = () => {
           title="Total Products"
           value={stats.totalProducts}
           icon="📦"
-          color="text-white"
+          color="text-[var(--text-primary)]"
         />
         <StatCard
           title="Low Stock Items"
@@ -212,7 +229,7 @@ const Dashboard = () => {
           title="Total Customers"
           value={stats.totalCustomers}
           icon="👥"
-          color="text-white"
+          color="text-[var(--text-primary)]"
         />
         <StatCard
           title="Monthly Revenue"
@@ -227,13 +244,19 @@ const Dashboard = () => {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
 
         {/* Revenue Bar Chart */}
-        <div className="lg:col-span-2 bg-gray-900 border border-gray-800 rounded-2xl p-6">
+        <div
+          className="lg:col-span-2 rounded-2xl p-6 border"
+          style={{
+            backgroundColor: 'var(--bg-card)',
+            borderColor: 'var(--border-color)'
+          }}
+        >
           <div className="flex items-center justify-between mb-6">
             <div>
-              <h2 className="text-white font-semibold">
+              <h2 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
                 📈 Revenue Last 7 Days
               </h2>
-              <p className="text-gray-500 text-xs mt-1">
+              <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                 Daily revenue breakdown
               </p>
             </div>
@@ -253,8 +276,10 @@ const Dashboard = () => {
             <div className="flex items-center justify-center h-48">
               <div className="text-center">
                 <p className="text-4xl mb-2">📊</p>
-                <p className="text-gray-500 text-sm">No transactions yet</p>
-                <p className="text-gray-600 text-xs mt-1">
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  No transactions yet
+                </p>
+                <p className="text-xs mt-1" style={{ color: 'var(--text-muted)' }}>
                   Add sales to see revenue chart
                 </p>
               </div>
@@ -267,12 +292,12 @@ const Dashboard = () => {
               >
                 <XAxis
                   dataKey="day"
-                  tick={{ fill: '#94a3b8', fontSize: 11 }}
+                  tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
                 />
                 <YAxis
-                  tick={{ fill: '#94a3b8', fontSize: 11 }}
+                  tick={{ fill: 'var(--text-secondary)', fontSize: 11 }}
                   axisLine={false}
                   tickLine={false}
                   tickFormatter={(v) => v >= 1000 ? (v / 1000).toFixed(0) + 'k' : v}
@@ -291,15 +316,25 @@ const Dashboard = () => {
         </div>
 
         {/* Category Pie Chart */}
-        <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-          <h2 className="text-white font-semibold mb-1">
+        <div
+          className="rounded-2xl p-6 border"
+          style={{
+            backgroundColor: 'var(--bg-card)',
+            borderColor: 'var(--border-color)'
+          }}
+        >
+          <h2 className="font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>
             🗂 Stock by Category
           </h2>
-          <p className="text-gray-500 text-xs mb-4">Units per category</p>
+          <p className="text-xs mb-4" style={{ color: 'var(--text-muted)' }}>
+            Units per category
+          </p>
 
           {categoryChartData.length === 0 ? (
             <div className="flex items-center justify-center h-48">
-              <p className="text-gray-500 text-sm">No products yet</p>
+              <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                No products yet
+              </p>
             </div>
           ) : (
             <>
@@ -315,18 +350,15 @@ const Dashboard = () => {
                     dataKey="value"
                   >
                     {categoryChartData.map((entry, index) => (
-                      <Cell
-                        key={index}
-                        fill={COLORS[index % COLORS.length]}
-                      />
+                      <Cell key={index} fill={COLORS[index % COLORS.length]} />
                     ))}
                   </Pie>
                   <Tooltip
                     contentStyle={{
-                      background: '#1e293b',
-                      border: '1px solid #334155',
+                      background: 'var(--bg-card)',
+                      border: '1px solid var(--border-color)',
                       borderRadius: '8px',
-                      color: '#fff',
+                      color: 'var(--text-primary)',
                       fontSize: '12px'
                     }}
                     formatter={(value, name) => [value + ' units', name]}
@@ -341,11 +373,11 @@ const Dashboard = () => {
                         className="w-2 h-2 rounded-full flex-shrink-0"
                         style={{ background: COLORS[index % COLORS.length] }}
                       />
-                      <p className="text-gray-400 text-xs truncate max-w-28">
+                      <p className="text-xs truncate max-w-28" style={{ color: 'var(--text-secondary)' }}>
                         {item.name}
                       </p>
                     </div>
-                    <p className="text-white text-xs font-medium">
+                    <p className="text-xs font-medium" style={{ color: 'var(--text-primary)' }}>
                       {item.value}
                     </p>
                   </div>
@@ -357,9 +389,17 @@ const Dashboard = () => {
       </div>
 
       {/* Recent Transactions */}
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
+      <div
+        className="rounded-2xl p-6 border"
+        style={{
+          backgroundColor: 'var(--bg-card)',
+          borderColor: 'var(--border-color)'
+        }}
+      >
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-white font-semibold">Recent Transactions</h2>
+          <h2 className="font-semibold" style={{ color: 'var(--text-primary)' }}>
+            Recent Transactions
+          </h2>
           <a
             href="/inventory"
             className="text-emerald-400 hover:text-emerald-300 text-xs transition-colors"
@@ -371,8 +411,10 @@ const Dashboard = () => {
         {recentTransactions.length === 0 ? (
           <div className="text-center py-8">
             <p className="text-4xl mb-3">📊</p>
-            <p className="text-white font-medium">No transactions yet</p>
-            <p className="text-gray-500 text-sm mt-1">
+            <p className="font-medium" style={{ color: 'var(--text-primary)' }}>
+              No transactions yet
+            </p>
+            <p className="text-sm mt-1" style={{ color: 'var(--text-secondary)' }}>
               Add your first sale to see activity here
             </p>
           </div>
@@ -381,17 +423,18 @@ const Dashboard = () => {
             {recentTransactions.map((t) => (
               <div
                 key={t._id}
-                className="flex items-center justify-between py-3 border-b border-gray-800 last:border-0"
+                className="flex items-center justify-between py-3 border-b last:border-0"
+                style={{ borderColor: 'var(--border-color)' }}
               >
                 <div className="flex items-center gap-3">
                   <div className="w-8 h-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center flex-shrink-0">
                     <span className="text-xs">💳</span>
                   </div>
                   <div>
-                    <p className="text-white text-sm font-medium">
+                    <p className="text-sm font-medium" style={{ color: 'var(--text-primary)' }}>
                       {t.productName}
                     </p>
-                    <p className="text-gray-500 text-xs mt-0.5">
+                    <p className="text-xs mt-0.5" style={{ color: 'var(--text-muted)' }}>
                       {t.customerId && t.customerId.customerName
                         ? t.customerId.customerName
                         : 'Customer'
@@ -403,7 +446,7 @@ const Dashboard = () => {
                   <p className="text-emerald-400 text-sm font-semibold">
                     PKR {t.amount.toLocaleString()}
                   </p>
-                  <p className="text-gray-500 text-xs">
+                  <p className="text-xs" style={{ color: 'var(--text-muted)' }}>
                     Qty: {t.quantity}
                   </p>
                 </div>
@@ -414,37 +457,46 @@ const Dashboard = () => {
       </div>
 
       {/* Quick Actions */}
-      <div className="bg-gray-900 border border-gray-800 rounded-2xl p-6">
-        <h2 className="text-white font-semibold mb-4">⚡ Quick Actions</h2>
+      <div
+        className="rounded-2xl p-6 border"
+        style={{
+          backgroundColor: 'var(--bg-card)',
+          borderColor: 'var(--border-color)'
+        }}
+      >
+        <h2 className="font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>
+          ⚡ Quick Actions
+        </h2>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-          <a
-            href="/inventory"
-            className="flex flex-col items-center gap-2 p-4 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors duration-200 border border-gray-700 hover:border-gray-600"
-          >
-            <span className="text-2xl">📦</span>
-            <span className="text-gray-400 text-xs text-center">Add Product</span>
-          </a>
-          <a
-            href="/customers"
-            className="flex flex-col items-center gap-2 p-4 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors duration-200 border border-gray-700 hover:border-gray-600"
-          >
-            <span className="text-2xl">👤</span>
-            <span className="text-gray-400 text-xs text-center">Add Customer</span>
-          </a>
-          <a
-            href="/ai-assistant"
-            className="flex flex-col items-center gap-2 p-4 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors duration-200 border border-gray-700 hover:border-gray-600"
-          >
-            <span className="text-2xl">🤖</span>
-            <span className="text-gray-400 text-xs text-center">Ask AI</span>
-          </a>
-          <a
-            href="/briefing"
-            className="flex flex-col items-center gap-2 p-4 bg-gray-800 hover:bg-gray-700 rounded-xl transition-colors duration-200 border border-gray-700 hover:border-gray-600"
-          >
-            <span className="text-2xl">🌅</span>
-            <span className="text-gray-400 text-xs text-center">Daily Briefing</span>
-          </a>
+          {[
+            { href: '/inventory',   icon: '📦', label: 'Add Product'   },
+            { href: '/customers',   icon: '👤', label: 'Add Customer'  },
+            { href: '/ai-assistant',icon: '🤖', label: 'Ask AI'        },
+            { href: '/briefing',    icon: '🌅', label: 'Daily Briefing'},
+          ].map(({ href, icon, label }) => (
+            <a
+              key={href}
+              href={href}
+              className="flex flex-col items-center gap-2 p-4 rounded-xl transition-colors duration-200 border"
+              style={{
+                backgroundColor: 'var(--bg-hover)',
+                borderColor: 'var(--border-color)'
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.backgroundColor = 'var(--bg-hover-active)';
+                e.currentTarget.style.borderColor = 'var(--border-hover)';
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.backgroundColor = 'var(--bg-hover)';
+                e.currentTarget.style.borderColor = 'var(--border-color)';
+              }}
+            >
+              <span className="text-2xl">{icon}</span>
+              <span className="text-xs text-center" style={{ color: 'var(--text-secondary)' }}>
+                {label}
+              </span>
+            </a>
+          ))}
         </div>
       </div>
 
